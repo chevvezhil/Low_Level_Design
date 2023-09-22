@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator</title>
+<style>
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f5f5f5;
+	margin: 0;
+	padding: 0;
+}
+
+h1 {
+	text-align: center;
+	margin: 20px 0;
+}
+
+.container {
+	max-width: 400px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: #fff;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.form-group {
+	margin-bottom: 15px;
+}
+
+label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+input[type="number"], select {
+	width: 90%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	font-size: 16px;
+}
+
+button {
+	background-color: #007BFF;
+	color: #fff;
+	border: none;
+	border-radius: 3px;
+	padding: 10px 20px;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+button:hover {
+	background-color: #0056b3;
+}
+
+#result {
+	font-size: 24px;
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+#history {
+	margin-top: 20px;
+	border-top: 1px solid #ccc;
+	padding-top: 20px;
+}
+
+#history h2 {
+	font-size: 20px;
+	margin-bottom: 10px;
+}
+
+#history ul {
+	list-style: none;
+	padding: 0;
+}
+
+#history li {
+	margin-bottom: 5px;
+}
+</style>
+</head>
+<body>
+	<h1>Calculator</h1>
+	<div class="container">
+		<div class="form-group">
+			<label for="operand1">Operand 1:</label> <input type="number"
+				id="operand1">
+		</div>
+		<div class="form-group">
+			<label for="operand2">Operand 2:</label> <input type="number"
+				id="operand2">
+		</div>
+		<div class="form-group">
+			<label for="operation">Operation:</label> <select id="operation">
+				<option value="add">Addition</option>
+				<option value="sub">Subtraction</option>
+				<option value="mul">Multiplication</option>
+				<option value="div">Division</option>
+			</select>
+		</div>
+		<div class="form-group">
+			<button onclick="sendData()">Calculate</button>
+		</div>
+		<div class="form-group">
+			<p>
+				Result: <span id="result">-</span>
+			</p>
+		</div>
+	</div>
+
+	 <div id="history" class="container">
+        <h2>Calculation History</h2>
+        <button onclick="showHistory()">Show History</button>
+        <ul id="operation-history">
+            <!-- Calculated operations will be displayed here -->
+        </ul>
+    </div>
+
+	<script>
+        function sendData() {
+            const operand1 = parseFloat(document.getElementById('operand1').value);
+            const operand2 = parseFloat(document.getElementById('operand2').value);
+            const operation = document.getElementById('operation').value;
+            const resultElement = document.getElementById('result');
+
+            const data = {
+                operand1: operand1,
+                operand2: operand2,
+                type: operation
+            };
+
+            fetch('performCalculation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(result => {
+                    resultElement.textContent = result;
+                })
+                .catch(error => {
+                    console.error('Error sending data to server:', error);
+                });
+        }
+        
+        function updateHistory() {
+            fetch('history')
+                .then(response => response.json())
+                .then(data => {
+                    const historyList = document.getElementById('operation-history');
+                    historyList.innerHTML = '';
+
+                    data.forEach(operation => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `${operation.operand1} ${operation.operation} ${operation.operand2} = ${operation.result}`;
+                        historyList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching history:', error);
+                });
+        }
+
+        
+        function showHistory() {
+        	updateHistory();
+            const historyDiv = document.getElementById('history');
+            const historyButton = document.querySelector('#history button');
+            const historyList = document.getElementById('operation-history');
+
+            // Toggle the visibility of the history section
+            if (historyList.style.display === 'none' || historyList.style.display === '') {
+                historyList.style.display = 'block';
+                historyButton.textContent = 'Hide History';
+                updateHistory();
+            } else {
+                historyList.style.display = 'none';
+                historyButton.textContent = 'Show History';
+            }
+        }
+
+        // Initially hide the history section
+        const historyList = document.getElementById('operation-history');
+        historyList.style.display = 'none';
+    </script>
+</body>
+</html>
