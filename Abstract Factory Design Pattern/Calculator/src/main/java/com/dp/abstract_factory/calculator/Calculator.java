@@ -1,11 +1,8 @@
 package com.dp.abstract_factory.calculator;
 import java.util.Stack;
 
-import com.dp.abstrct_factory.util.Addition;
-import com.dp.abstrct_factory.util.CalculatorFactory;
-import com.dp.abstrct_factory.util.Division;
-import com.dp.abstrct_factory.util.Multiplication;
-import com.dp.abstrct_factory.util.Subtraction;
+import com.dp.abstract_factory.BasicCalculatorFactory;
+import com.dp.abstract_factory.CalculatorFactory;
 
 public class Calculator {
     public static double calculate(String expression) {
@@ -77,25 +74,22 @@ public class Calculator {
     //TODO: Need to convert using factory method pattern
     private static double performOperation(double operand1, double operand2, char operator) {
        
-    	CalculatorFactory basicCalculator = CalculatorFactory.createCalculatorFactory("basic");
-		Addition basicAddition = basicCalculator.createAddition();
-		Subtraction basicSubtraction= basicCalculator.createSubtraction();
-		Multiplication basicMultiplication= basicCalculator.createMultiplication();
-		Division basicDivision = basicCalculator.createDivision();
-    	
+    	CalculatorFactory calculatorFactory = new BasicCalculatorFactory();
+    	CalculatorOperations calculator = calculatorFactory.createCalculator();
+		
     	
     	switch (operator) {
             case '+':
-                return basicAddition.calculate(operand1 , operand2);
+                return calculator.add(operand1 , operand2);
             case '-':
-                return basicSubtraction.calculate(operand1, operand2);
+                return calculator.subtract(operand1, operand2);
             case '*':
-                return basicMultiplication.calculate(operand1, operand2);
+                return calculator.multiply(operand1, operand2);
             case '/':
                 if (operand2 == 0) {
                     throw new ArithmeticException("Division by zero");
                 }
-                return basicDivision.calculate(operand1, operand2);
+                return calculator.divide(operand1, operand2);
             default:
                 throw new IllegalArgumentException("Invalid operator: " + operator);
         }
