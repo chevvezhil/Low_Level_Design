@@ -1,6 +1,6 @@
 package com.dp.abstract_factory.calculator;
 
-public class ScientificCalculator implements CalculatorOperations {
+public class ScientificCalculator implements Calculator {
 	
 	 @Override
 	    public double add(double x, double y) {

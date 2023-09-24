@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.dp.abstract_factory.calculator.Calculator;
+import com.dp.abstract_factory.calculator.ShuntingYardAlgorithm;
 
 @Controller
 public class CalculatorController {
@@ -17,7 +17,7 @@ public class CalculatorController {
 
 	@PostMapping("/Calculate")
 	public ResponseEntity<Double> performCalculation(@RequestBody String expression) {
-		Double result = Calculator.calculate(expression);
+		Double result = ShuntingYardAlgorithm.calculate(expression);
 		return ResponseEntity.ok(result);
 	}
 
